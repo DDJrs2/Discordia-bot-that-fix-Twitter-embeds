@@ -13,84 +13,84 @@ end)
 --begin of these helpful functions--
 local function extractContent(rawContentToExtract)
     for i = 1, string.len(rawContentToExtract), 1 do
-    	if string.sub(rawContentToExtract, i, i) == " " then
-    		return string.sub(rawContentToExtract, i+1, -1); --"ts!echo Nanora!" --> "Nanora!"
-    	end
+        if string.sub(rawContentToExtract, i, i) == " " then
+            return string.sub(rawContentToExtract, i+1, -1); --"ts!echo Nanora!" --> "Nanora!"
+        end
     end
 end
 
 local function isThisTwitter(rawContent, i)
-	return string.sub(rawContent, i, string.len("https://twitter.com")+i) == "https://twitter.com/";
+    return string.sub(rawContent, i, string.len("https://twitter.com")+i) == "https://twitter.com/";
 end
 
 local function isThisFXTwitter(rawContent, i)
-	return string.sub(rawContent, i, string.len("https://fxtwitter.com")+i) == "https://fxtwitter.com/";
+    return string.sub(rawContent, i, string.len("https://fxtwitter.com")+i) == "https://fxtwitter.com/";
 end
 
 local function isThisStatus(rawContent, i)
-	return string.sub(rawContent, i, string.len("status")+i) == "status/";
+    return string.sub(rawContent, i, string.len("status")+i) == "status/";
 end
 
 local function FindTwitterAndStatus(Message)
-	local rawContent = Message.content;
-	local confirmation1 = false;
-	local confirmation2 = false;
+    local rawContent = Message.content;
+    local confirmation1 = false;
+    local confirmation2 = false;
 
-	for i = 1, string.len(rawContent), 1 do
-		if isThisTwitter(rawContent, i) then
-			confirmation1 = true;
-			break;
-		end
-	end
+    for i = 1, string.len(rawContent), 1 do
+        if isThisTwitter(rawContent, i) then
+            confirmation1 = true;
+            break;
+        end
+    end
 
-	if confirmation1 then
-		for i = 1, string.len(rawContent), 1 do
-			if isThisStatus(rawContent, i) then
-				confirmation2 = true;
-				break;
-			end
-		end
-	else
-		return false;
-	end
+    if confirmation1 then
+        for i = 1, string.len(rawContent), 1 do
+            if isThisStatus(rawContent, i) then
+                confirmation2 = true;
+                break;
+            end
+        end
+    else
+        return false;
+    end
 
-	if confirmation2 then
-		return true;
-	else
-		return false;
-	end
+    if confirmation2 then
+        return true;
+    else
+        return false;
+    end
 end
 
 local function separateOnlyFXTwitterLink(entireMessage)
-	for i = 1, string.len(entireMessage), 1 do
-		if isThisFXTwitter(entireMessage, i) then
-			for j = i, string.len(entireMessage), 1 do
-				if string.sub(entireMessage, j, j) == " " then
-					return string.sub(entireMessage, i, j);
-				end
-			end
-		end
-	end
+    for i = 1, string.len(entireMessage), 1 do
+        if isThisFXTwitter(entireMessage, i) then
+            for j = i, string.len(entireMessage), 1 do
+                if string.sub(entireMessage, j, j) == " " then
+                    return string.sub(entireMessage, i, j);
+                end
+            end
+        end
+    end
 
-	for i = 1, string.len(entireMessage), 1 do
-    	if isThisFXTwitter(entireMessage, i) then
-			return string.sub(entireMessage, i,-1);
-    	end
+    for i = 1, string.len(entireMessage), 1 do
+        if isThisFXTwitter(entireMessage, i) then
+            return string.sub(entireMessage, i,-1);
+        end
     end
 end
 
 local function TransformTwitterToFXTwitter(Message)
-	if FindTwitterAndStatus(Message) then
+    if FindTwitterAndStatus(Message) then
 
-		local rawContent = Message.content;
+        local rawContent = Message.content;
 
-		for i = 1, string.len(rawContent), 1 do
-			if isThisTwitter(rawContent, i) then
-				return separateOnlyFXTwitterLink(string.sub(rawContent, 1, i-1) .. "https://fxtwitter.com" .. string.sub(rawContent, i+string.len("https://twitter.com"), -1)); 
-			end
-		end
+        for i = 1, string.len(rawContent), 1 do
+            if isThisTwitter(rawContent, i) then
+                return separateOnlyFXTwitterLink(string.sub(rawContent, 1, i-1) .. "https://fxtwitter.com" .. string.sub(rawContent, i+string.len("https://twitter.com"), -1)); 
+            end
+        end
 
-	end
+    end
 end
 --end of these helpful functions--
 
@@ -101,13 +101,13 @@ local function hello(Message)
 end
 
 local function echo(Message)
-	local rawContent = Message.content;
-	local echo = extractContent(rawContent);
-	if echo ~= nil then
-		Message:reply(string.format("%s", echo));
-	else
-		Message:reply(string.format("%s, Say something and I'll say it back!", Message.author.mentionString));
-	end
+    local rawContent = Message.content;
+    local echo = extractContent(rawContent);
+    if echo ~= nil then
+        Message:reply(string.format("%s", echo));
+    else
+        Message:reply(string.format("%s, Say something and I'll say it back!", Message.author.mentionString));
+    end
 end
 --end functions--
 
@@ -115,7 +115,7 @@ end
 CommandsTable = {
 
     ["hello"] = hello,
-	["echo"]  = echo,
+    ["echo"]  = echo,
 
 }
 
@@ -126,26 +126,26 @@ Client:on("messageCreate", function(Message)
 
     if (string.sub(rawContent, 1, prefixLenght):lower() == prefix) then
 
-    	local command;
-    	local content = extractContent(rawContent);
+        local command;
+        local content = extractContent(rawContent);
 
         if content ~= nil then
-        	command = string.sub(rawContent, prefixLenght+1, -(string.len(content))-2):lower(); --"ts!echo henlo lizer" will be "echo", excluding "ts!" and " henlo lizer"
+            command = string.sub(rawContent, prefixLenght+1, -(string.len(content))-2):lower(); --"ts!echo henlo lizer" will be "echo", excluding "ts!" and " henlo lizer"
         else
-        	command = string.sub(rawContent, prefixLenght+1, -1):lower(); --"ts!hello" will be "hello", excluding "ts!" only
+            command = string.sub(rawContent, prefixLenght+1, -1):lower(); --"ts!hello" will be "hello", excluding "ts!" only
         end
 
         local funcao = CommandsTable[command]; --CommandsTable["echo"];
 
         if funcao ~= nil then
-			funcao(Message); --> echo(Message);
+            funcao(Message); --> echo(Message);
         end
 
-	elseif (Message.embed == nil and FindTwitterAndStatus(Message)) then
+    elseif (Message.embed == nil and FindTwitterAndStatus(Message)) then
 
-		Message.channel:send(TransformTwitterToFXTwitter(Message));
+        Message.channel:send(TransformTwitterToFXTwitter(Message));
 
-	end
+    end
 
 end)
 
