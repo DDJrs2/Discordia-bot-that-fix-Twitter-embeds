@@ -46,19 +46,14 @@ local function FindTwitterAndStatus(Message)
     if confirmation1 then
         for i = 1, string.len(rawContent), 1 do
             if isThisStatus(rawContent, i) then
-                confirmation2 = true;
-                break;
+                return true;
             end
         end
     else
         return false;
     end
-
-    if confirmation2 then
-        return true;
-    else
-        return false;
-    end
+    
+    return false;
 end
 
 local function separateOnlyFXTwitterLink(entireMessage)
