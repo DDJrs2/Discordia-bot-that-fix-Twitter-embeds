@@ -2,7 +2,7 @@ Discord = require('discordia');
 Client = Discord.Client();
 
 local file = io.open("prefix.txt", "r");
-local prefix = file:read("*a"); --let's say the prefix is 'ts!'.
+local prefix = file:read("*a");
 local prefixLenght = string.len(prefix);
 file:close();
 
@@ -10,11 +10,11 @@ Client:on('ready', function()
     print('Yeehaw');
 end)
 
---begin of these helpful functions--
+
 local function extractContent(rawContentToExtract)
     for i = 1, string.len(rawContentToExtract), 1 do
         if string.sub(rawContentToExtract, i, i) == " " then
-            return string.sub(rawContentToExtract, i+1, -1); --"ts!echo Nanora!" --> "Nanora!"
+            return string.sub(rawContentToExtract, i+1, -1);
         end
     end
 end
@@ -33,17 +33,16 @@ end
 
 local function FindTwitterAndStatus(Message)
     local rawContent = Message.content;
-    local confirmation1 = false;
-    local confirmation2 = false;
+    local confirmation = false;
 
     for i = 1, string.len(rawContent), 1 do
         if isThisTwitter(rawContent, i) then
-            confirmation1 = true;
+            confirmation = true;
             break;
         end
     end
 
-    if confirmation1 then
+    if confirmation then
         for i = 1, string.len(rawContent), 1 do
             if isThisStatus(rawContent, i) then
                 return true;
@@ -87,26 +86,22 @@ local function TransformTwitterToFXTwitter(Message)
 
     end
 end
---end of these helpful functions--
 
---user-controlled functions--
+
 local function hello(Message)
     Message:reply(string.format('Hey %s!', Message.author.mentionString));
     Message:addReaction("👋");
 end
 
-local function echo(Message)
-    local rawContent = Message.content;
-    local echo = extractContent(rawContent);
+local function echo(Message, echo)
     if echo ~= nil then
         Message:reply(string.format("%s", echo));
     else
         Message:reply(string.format("%s, Say something and I'll say it back!", Message.author.mentionString));
     end
 end
---end functions--
 
---functions table
+
 CommandsTable = {
 
     ["hello"] = hello,
@@ -114,7 +109,7 @@ CommandsTable = {
 
 }
 
---event-oriented, will execute everytime a message is sent to a server
+
 Client:on("messageCreate", function(Message)
 
     local rawContent = Message.content;
@@ -122,21 +117,21 @@ Client:on("messageCreate", function(Message)
     if (string.sub(rawContent, 1, prefixLenght):lower() == prefix) then
 
         local command;
-        local content = extractContent(rawContent);
+        local argument = extractContent(rawContent);
 
-        if content ~= nil then
-            command = string.sub(rawContent, prefixLenght+1, -(string.len(content))-2):lower(); --"ts!echo henlo lizer" will be "echo", excluding "ts!" and " henlo lizer"
+        if argument ~= nil then
+            command = string.sub(rawContent, prefixLenght+1, -(string.len(argument))-2):lower();
         else
-            command = string.sub(rawContent, prefixLenght+1, -1):lower(); --"ts!hello" will be "hello", excluding "ts!" only
+            command = string.sub(rawContent, prefixLenght+1, -1):lower();
         end
 
-        local funcao = CommandsTable[command]; --CommandsTable["echo"];
+        local funcao = CommandsTable[command];
 
         if funcao ~= nil then
-            funcao(Message); --> echo(Message);
+            funcao(Message, argument);
         end
 
-    elseif (Message.embed == nil and FindTwitterAndStatus(Message)) then
+    elseif (FindTwitterAndStatus(Message) and Message.embed == nil and not Message.author.bot) then
 
         Message.channel:send(TransformTwitterToFXTwitter(Message));
 
