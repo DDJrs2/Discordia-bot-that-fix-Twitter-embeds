@@ -5,5 +5,3 @@ It's not perfect, but I'm planning in improve it.
 
 ## Known issue
 If there's two or more Twitter links in one message, only the first link will be sent.
-
-Sometimes the bot will try to fix the link regardless if the original link got embedded succesfully. I'll fix it by using the 'messageUpdate' event to confirm if the message's embed was truly nil.
