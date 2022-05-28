@@ -1,7 +1,7 @@
 Discord = require('discordia');
 Client = Discord.Client();
 
-require('TwitterFX');
+require('TwitterVX');
 
 Client:on("messageCreate", function(message)
 	if message.author.bot then return end
