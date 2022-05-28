@@ -8,7 +8,7 @@ Client:on("messageCreate", function(message)
 	if (FindTwitterAndStatus(message) and message.embed == nil) then
 
 		if not Client:waitFor("messageUpdate", 2000) then --This condition will be true if the message don't get an embed in 2000 milliseconds
-			message.channel:send(SendFXTwitterLink(message));
+			message.channel:send(SendVXTwitterLink(message));
 		end
 
 	end
